@@ -40,7 +40,8 @@
           <v-dialog v-for="card in computedFilteredCards" :key="card.key" v-model="card.raised" persistent full-page>
             <v-card min-height="500" min-width="400">
               <v-card-title class="headline">remote.{{ card.key }}({{ funcCardParam(card) }})<v-spacer></v-spacer>
-                <v-btn color="primary" fab large @click="card.showParams=!card.showParams"> 参数 </v-btn>
+                <v-btn color="primary" fab large @click="funcOpenUrl('https://swtcdoc.netlify.com/docs/swtclib/#' + card.anchor)" v-show="card.anchor"> 文档 </v-btn>
+                <v-btn color="green" fab large @click="card.showParams=!card.showParams"> 参数 </v-btn>
                 <v-btn color="red lighten-1" fab large @click="card.raised = false">关闭</v-btn>
               </v-card-title>
               <v-toolbar dense dark>
@@ -240,9 +241,9 @@
     const resourceLinks = [
       {name: 'swtdocs.org', url: 'http://www.swtcdocs.org'},
       {name: 'swtclib库源码', url: 'https://github.com/swtcca/swtclib'},
-      {name: 'swtclib库文档', url: 'http://swtc.daszichan.com'},
+      {name: 'swtclib库文档', url: 'https://swtcdoc.netlify.com'},
       {name: 'jingtunlib库文档', url: 'http://developer.jingtum.com'},
-      {name: 'swtclib实例', url: 'http://swtc.daszichan.com/docs/examples'},
+      {name: 'swtclib实例', url: 'https://swtclib.netlify.com/examples'},
       {name: 'javascript教程', url: 'https://www.liaoxuefeng.com/wiki/1022910821149312'}
     ]
     const prepareBlocks = {
@@ -649,6 +650,11 @@ remote.connectPromise()
             computedCardKeys.value.forEach((key) => {
               let card = cards.value[key]
               card.interface = funcCardParamInterface(card)
+              if (key.startsWith('request') || key.startsWith('build')) {
+                if (!card.anchor) {
+                  card.anchor = key
+                }
+              }
               // console.log(`processing card for ${key}`)
               if (key.startsWith('request')) {
                 card.labels.push('查询')
@@ -755,6 +761,7 @@ remote.connectPromise()
         const prepares = vueCompositionApi.ref({
           swtclib: {
             key: 'swtc-lib',
+            anchor: 'swtclib',
             show: true,
             labels: ["基础"],
             title: '包装类 - Remote',
@@ -767,6 +774,7 @@ remote.connectPromise()
           },
           request: {
             key: 'request',
+            anchor: 'requestClass',
             show: false,
             labels: ["辅助"],
             title: '包装类 - Request [查询]',
@@ -778,6 +786,7 @@ remote.connectPromise()
           },
           tx: {
             key: 'tx',
+            anchor: 'transactionClass',
             show: false,
             labels: ["辅助"],
             title: '包装类 - Transaction [写入]',
@@ -791,6 +800,7 @@ remote.connectPromise()
           },
           wallet: {
             key: 'wallet',
+            anchor: 'walletClass',
             show: false,
             labels: ["基础"],
             title: '包装类 - Wallet [账户]',
@@ -804,6 +814,7 @@ remote.connectPromise()
           },
           unique: {
             key: 'unique',
+            anchor: '',
             show: false,
             labels: ["独有"],
             title: '独有',
@@ -850,6 +861,7 @@ remote.connectPromise()
         const cards = vueCompositionApi.ref({
           requestLedger: {
             key: 'requestLedger',
+            anchor: '',
             interface: '',
             title: '查询区块',
             content: '查询区块',
@@ -864,6 +876,7 @@ remote.connectPromise()
           },
           requestAccountInfo: {
             key: 'requestAccountInfo',
+            anchor: '',
             interface: '',
             title: '查询账户信息',
             content: '查询账户信息',
@@ -878,6 +891,7 @@ remote.connectPromise()
           },
           requestAccountTums: {
             key: 'requestAccountTums',
+            anchor: '',
             interface: '',
             title: '查询可发送接收的通证',
             content: '查询可发送接收的通证',
@@ -892,6 +906,7 @@ remote.connectPromise()
           },
           requestTx: {
             key: 'requestTx',
+            anchor: '',
             interface: '',
             title: '查询某一交易信息',
             content: '查询某一交易信息',
@@ -906,6 +921,7 @@ remote.connectPromise()
           },
           requestAccountTx: {
             key: 'requestAccountTx',
+            anchor: '',
             interface: '',
             title: '查询账户交易记录',
             content: '查询账户交易记录',
@@ -920,6 +936,7 @@ remote.connectPromise()
           },
           requestAccountRelations: {
             key: 'requestAccountRelations',
+            anchor: '',
             interface: '',
             title: '查询账户关系和通证',
             content: '查询账户关系和通证',
@@ -934,6 +951,7 @@ remote.connectPromise()
           },
           requestAccounts: {
             key: 'requestAccounts',
+            anchor: '',
             interface: '',
             title: '查询开户数量',
             content: '查询开户数量',
@@ -948,6 +966,7 @@ remote.connectPromise()
           },
           buildPaymentTx: {
             key: 'buildPaymentTx',
+            anchor: '',
             interface: '',
             title: '创建支付交易',
             content: '创建支付交易',
@@ -962,6 +981,7 @@ remote.connectPromise()
           },
           requestOrderBook: {
             key: 'requestOrderBook',
+            anchor: '',
             interface: '',
             title: '查询挂单列表',
             content: '查询挂单列表',
@@ -976,6 +996,7 @@ remote.connectPromise()
           },
           requestAccountOffers: {
             key: 'requestAccountOffers',
+            anchor: '',
             interface: '',
             title: '查询账户挂单',
             content: '查询账户挂单',
@@ -990,6 +1011,7 @@ remote.connectPromise()
           },
           buildAccountSetTx: {
             key: 'buildAccountSetTx',
+            anchor: '',
             interface: '',
             title: '创建账户关系交易',
             content: '创建账户关系交易',
@@ -1002,8 +1024,24 @@ remote.connectPromise()
             labels: [],
             raised: false
           },
+          requestBrokerage: {
+            key: 'requestBrokerage',
+            anchor: '',
+            interface: '',
+            title: '查询代理商收费',
+            content: '查询代理商收费',
+            code_pre: '',
+            code_post: '',
+            code: '',
+            params: 'object',
+            showParams: false,
+            returns: 'tx',
+            labels: ["进阶"],
+            raised: false
+          },
           buildBrokerageTx: {
             key: 'buildBrokerageTx',
+            anchor: '',
             interface: '',
             title: '创建代理商交易',
             content: '创建代理商交易',
@@ -1018,6 +1056,7 @@ remote.connectPromise()
           },
           buildContractCallTx: {
             key: 'buildContractCallTx',
+            anchor: '',
             interface: '',
             title: '创建执行LUA合约交易',
             content: '创建执行LUA合约交易',
@@ -1032,6 +1071,7 @@ remote.connectPromise()
           },
           buildContractDeployTx: {
             key: 'buildContractDeployTx',
+            anchor: '',
             interface: '',
             title: '创建部署LUA合约交易',
             content: '创建部署LUA合约交易',
@@ -1046,6 +1086,7 @@ remote.connectPromise()
           },
           buildContractInitTx: {
             key: 'buildContractInitTx',
+            anchor: '',
             interface: '',
             title: '创建部署SOLIDITY合约交易',
             content: '创建部署SOLIDITY合约交易',
@@ -1060,6 +1101,7 @@ remote.connectPromise()
           },
           buildContractInvokeTx: {
             key: 'buildContractInvokeTx',
+            anchor: '',
             interface: '',
             title: '创建执行SOLIDITY合约交易',
             content: '创建执行SOLIDITY合约交易',
@@ -1074,6 +1116,7 @@ remote.connectPromise()
           },
           buildOfferCancelTx: {
             key: 'buildOfferCancelTx',
+            anchor: '',
             interface: '',
             title: '创建取消挂单交易',
             content: '创建取消挂单交易',
@@ -1088,6 +1131,7 @@ remote.connectPromise()
           },
           buildOfferCreateTx: {
             key: 'buildOfferCreateTx',
+            anchor: '',
             interface: '',
             title: '创建提交挂单交易',
             content: '创建提交挂单交易',
@@ -1102,6 +1146,7 @@ remote.connectPromise()
           },
           buildRelationTx: {
             key: 'buildRelationTx',
+            anchor: '',
             interface: '',
             title: '创建关系交易',
             content: '创建关系交易',
@@ -1129,6 +1174,7 @@ remote.connectPromise()
           // },
           makeCurrency: {
             key: 'makeCurrency',
+            anchor: '',
             title: '生成通证',
             content: '生成通证',
             code_pre: '',
@@ -1142,6 +1188,7 @@ remote.connectPromise()
           },
           makeAmount: {
             key: 'makeAmount',
+            anchor: '',
             title: '生成通证数量',
             content: '生成通证数量',
             code_pre: '',
@@ -1155,6 +1202,7 @@ remote.connectPromise()
           },
           buildSignTx: {
             key: 'buildSignTx',
+            anchor: '',
             interface: '',
             title: '创建签名交易',
             content: '创建签名交易',
@@ -1169,6 +1217,7 @@ remote.connectPromise()
           },
           connectPromise: {
             key: 'connectPromise',
+            anchor: '',
             interface: '',
             title: '连接服务器',
             content: '连接服务器',
@@ -1183,6 +1232,7 @@ remote.connectPromise()
           },
           disconnect: {
             key: 'disconnect',
+            anchor: '',
             interface: '',
             title: '断开服务器',
             content: '断开服务器',
@@ -1197,6 +1247,7 @@ remote.connectPromise()
           },
           requestServerInfo: {
             key: 'requestServerInfo',
+            anchor: '',
             interface: '',
             title: '查询服务器信息',
             content: '查询服务器信息',
@@ -1211,6 +1262,7 @@ remote.connectPromise()
           },
           requestLedgerClosed: {
             key: 'requestLedgerClosed',
+            anchor: '',
             interface: '',
             title: '查询最新关闭的区块',
             content: '查询最新关闭的区块',
@@ -1225,6 +1277,7 @@ remote.connectPromise()
           },
           requestPathFind: {
             key: 'requestPathFind',
+            anchor: '',
             interface: '',
             title: '查询路径撮合',
             content: '查询路径撮合',
@@ -1244,34 +1297,22 @@ remote.connectPromise()
           activeLabels,
           wallets,
           browsers,
-          interval,
-          ledger,
-          started,
           codeReadonly,
           blocks,
           dashboardBlocks,
-          computedFilteredCards,
-          cards,
           prepareBlocks,
           prepareWeb,
           prepares,
           resourceLinks,
+          computedFilteredCards,
           computedPrepareKeys,
           computedCardKeys,
-          computedRemoteOption,
-          computedApiRemoteOption,
           computedRemote,
-          computedRemoteString,
           computedApiRemote,
-          funcPrepareRaise,
           funcCardRaise,
           funcCardParam,
-          funcInitBlocks,
-          funcInitCards,
           funcCopy,
           funcEval,
-          funcSetInterval,
-          funcClearInterval,
           funcUpdateAccountInfo,
           funcOpenUrl,
           funcCardParamInterface
