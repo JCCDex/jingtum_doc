@@ -2,5 +2,5 @@
 - 直接修改jingtun-lib的演示
 
 ### 在线练习
-- SPA，http://learn.swtclib.ca
+- SPA，https://swtclearn.netlify.com/
 - git@github.com:swtcca/swtc-tutorials.git

@@ -135,7 +135,7 @@
               <h3 class="pl-4">node.js引用</h3>
               <v-list-item>
                   <v-list-item-content>
-                    <prism-component inline language="javascript">const swtc_lib = require('swtc-lib')</prism-component>
+                    <prism-component inline language="javascript">const swtc_lib = require('@swtc/lib')</prism-component>
                   </v-list-item-content>
               </v-list-item>
               <h3 class="pl-4">web引用</h3>
@@ -636,7 +636,7 @@ ${string}
             computedCardKeys.value.forEach((key) => {
               let card = cards.value[key]
               card.code_pre = `
-if (!swtc_lib) { const swtc_lib = require("swtc-lib") } // node.js 环境需要导入库 
+if (!swtc_lib) { const swtc_lib = require("@swtc/lib") } // node.js 环境需要导入库 
 let remote = ${computedRemoteString.value}
 let secret = '${settings.walletSecret}'
 let address = '${settings.walletAddress}'
@@ -683,7 +683,7 @@ remote.connectPromise()
                 }
               }
               card.code_pre = `
-if (!swtc_lib) { const swtc_lib = require("swtc-lib") } // node.js 环境需要导入库 
+if (!swtc_lib) { const swtc_lib = require("@swtc/lib") } // node.js 环境需要导入库 
 let remote = ${computedRemoteString.value}
 let secret = '${settings.walletSecret}'
 let address = '${settings.walletAddress}'
