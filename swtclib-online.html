@@ -226,18 +226,20 @@
   <script src="https://unpkg.com/@vue/composition-api/dist/vue-composition-api.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
   <script src="https://unpkg.com/vue-prism-component@1.1.1/dist/vue-prism-component.js"></script>
-  <script src="https://unpkg.com/swtc-lib"></script>
-  <script src="https://unpkg.com/swtc-api"></script>
+  <script src="https://unpkg.com/@swtc/lib"></script>
+  <script src="https://unpkg.com/@swtc/api"></script>
   <!-- <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script> -->
   <script>
     Vue.use(vueCompositionApi.plugin || vueCompositionApi.default)
-    const remoteTypes = 'import { IMarker, IAmount } from "swtc-transaction"\nexport {\n  IMarker,\n  ICurrency,\n  IAmount,\n  ISwtcTxOptions,\n  IPaymentTxOptions,\n  IOfferCreateTxOptions,\n  IOfferCancelTxOptions,\n  IContractInitTxOptions,\n  IContractInvokeTxOptions,\n  IContractDeployTxOptions,\n  IContractCallTxOptions,\n  ISignTxOptions,\n  IAccountSetTxOptions,\n  IRelationTxOptions\n} from "swtc-transaction"\n\nexport interface IRemoteOptions {\n  server?: string\n  server_failover?: string\n  issuer?: string\n  token?: string\n  solidity?: boolean\n  local_sign?: boolean\n  timeout?: number\n  failover?: boolean\n}\n\nexport interface IRequestLedgerOptions {\n  ledger_index?: string | number\n  ledger_hash?: string\n  full?: boolean\n  expand?: boolean\n  transactions?: boolean\n  accounts?: boolean\n}\n\nexport interface IRequestAccountOptions {\n  account: string\n  type?: string\n  ledger?: string\n  ledger_index: string | number\n  ledger_hash: string\n  marker?: IMarker\n  peer?: any\n  limit?: string | number\n}\n\nexport interface IRequestAccountsOptions {\n  ledger_index?: string | number\n  ledger_hash?: string\n  ledger?: string\n  marker?: IMarker\n}\n\nexport interface IRequestTxOptions {\n  hash: string\n}\n\nexport interface IRequestAccountInfoOptions {\n  account: string\n  ledger?: string\n  ledger_index?: string | number\n  ledger_hash?: string\n}\n\nexport interface IRequestAccountTumsOptions {\n  account: string\n  ledger?: string\n  ledger_index?: string | number\n  ledger_hash?: string\n}\n\nexport interface IRequestAccountRelationsOptions {\n  type: string\n  account: string\n  ledger?: string\n  ledger_index?: string | number\n  ledger_hash?: string\n  limit?: string | number\n  marker?: IMarker\n}\n\nexport interface IRequestAccountOffersOptions {\n  type: string\n  account: string\n  ledger?: string\n  ledger_index?: string | number\n  ledger_hash?: string\n  limit?: string | number\n  marker?: IMarker\n}\n\nexport interface IRequestAccountTxOptions {\n  type: string\n  account: string\n  ledger?: string\n  ledger_index?: string | number\n  ledger_hash?: string\n  ledger_min?: number\n  ledger_max?: number\n  limit?: string | number\n  marker?: IMarker\n  offset?: string | number\n  forward?: boolean\n}\n\nexport interface IRequestOrderBookOptions {\n  taker?: string\n  taker_gets?: IAmount\n  taker_pays?: IAmount\n  gets?: IAmount\n  pays?: IAmount\n  limit?: string | number\n  marker?: IMarker\n}\n'.split(/\n\n/).filter( e => /export interface/.test(e))
-    const txTypes = 'export interface IMarker {\n  ledger: string | number\n  seq: string | number\n}\n\nexport interface ICurrency {\n  currency: string\n  issuer: string\n}\n\nexport interface IAmount {\n  currency: string\n  issuer: string\n  value: number\n}\n\nexport interface ISwtcTxOptions {\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface IPaymentTxOptions {\n  amount: IAmount\n  source?: string\n  from?: string\n  account?: string\n  destination?: string\n  to?: string\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface IOfferCreateTxOptions {\n  type: string\n  source?: string\n  from?: string\n  account?: string\n  gets?: IAmount\n  pays?: IAmount\n  taker_gets?: IAmount\n  taker_pays?: IAmount\n  platform?: any\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface IOfferCancelTxOptions {\n  sequence: number\n  source?: string\n  from?: string\n  account?: string\n  memo?: string\n  secret?: string\n}\n\nexport interface IContractInitTxOptions {\n  amount: number\n  account: string\n  abi: any[]\n  payload: string\n  params?: string[]\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface IContractInvokeTxOptions {\n  amount: number\n  account: string\n  destination: string\n  abi: any[]\n  func: string\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface IContractDeployTxOptions {\n  amount: IAmount\n  account: string\n  payload: string\n  params?: string[]\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface IContractCallTxOptions {\n  amount: IAmount\n  account: string\n  destination: string\n  params?: string[]\n  func?: string\n  foo?: string\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface ISignTxOptions {\n  blob: string\n}\n\nexport interface IAccountSetTxOptions {\n  type: string\n  source?: string\n  from?: string\n  account?: string\n  set?: string | number\n  set_flag?: string | number\n  clear?: string | number\n  clear_flag?: string | number\n  delegate_key?: string\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface IRelationTxOptions {\n  type: string\n  source?: string\n  from?: string\n  account?: string\n  target: string\n  limit: IAmount\n  quality_out: any\n  quality_in: any\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n'.split(/\n\n/).filter( e => /export interface/.test(e))
+    let remoteTypes = 'import { IMarker, IAmount } from "swtc-transaction"\nexport {\n  IMarker,\n  ICurrency,\n  IAmount,\n  ISwtcTxOptions,\n  IPaymentTxOptions,\n  IOfferCreateTxOptions,\n  IOfferCancelTxOptions,\n  IContractInitTxOptions,\n  IContractInvokeTxOptions,\n  IContractDeployTxOptions,\n  IContractCallTxOptions,\n  ISignTxOptions,\n  IAccountSetTxOptions,\n  IRelationTxOptions,\n  ISignerListTxOptions,\n  ISignFirstTxOptions,\n  ISignOtherTxOptions,\n  IMultiSigningOptions\n} from "swtc-transaction"\n\nexport interface IRemoteOptions {\n  server?: string\n  server_failover?: string\n  issuer?: string\n  token?: string\n  solidity?: boolean\n  local_sign?: boolean\n  timeout?: number\n  failover?: boolean\n}\n\nexport interface IRequestLedgerOptions {\n  ledger_index?: string | number\n  ledger_hash?: string\n  full?: boolean\n  expand?: boolean\n  transactions?: boolean\n  accounts?: boolean\n}\n\nexport interface IRequestAccountOptions {\n  account: string\n  type?: string\n  ledger?: string\n  ledger_index: string | number\n  ledger_hash: string\n  marker?: IMarker\n  peer?: any\n  limit?: string | number\n}\n\nexport interface IRequestAccountsOptions {\n  ledger_index?: string | number\n  ledger_hash?: string\n  ledger?: string\n  marker?: IMarker\n}\n\nexport interface IRequestTxOptions {\n  hash: string\n}\n\nexport interface IRequestAccountInfoOptions {\n  account: string\n  ledger?: string\n  ledger_index?: string | number\n  ledger_hash?: string\n}\n\nexport interface IRequestAccountTumsOptions {\n  account: string\n  ledger?: string\n  ledger_index?: string | number\n  ledger_hash?: string\n}\n\nexport interface IRequestAccountRelationsOptions {\n  type: string\n  account: string\n  ledger?: string\n  ledger_index?: string | number\n  ledger_hash?: string\n  limit?: string | number\n  marker?: IMarker\n}\n\nexport interface IRequestAccountOffersOptions {\n  type: string\n  account: string\n  ledger?: string\n  ledger_index?: string | number\n  ledger_hash?: string\n  limit?: string | number\n  marker?: IMarker\n}\n\nexport interface IRequestAccountTxOptions {\n  type: string\n  account: string\n  ledger?: string\n  ledger_index?: string | number\n  ledger_hash?: string\n  ledger_min?: number\n  ledger_max?: number\n  limit?: string | number\n  marker?: IMarker\n  offset?: string | number\n  forward?: boolean\n}\n\nexport interface IRequestOrderBookOptions {\n  taker?: string\n  taker_gets?: IAmount\n  taker_pays?: IAmount\n  gets?: IAmount\n  pays?: IAmount\n  limit?: string | number\n  marker?: IMarker\n}\n\nexport interface IRequestSignerListOptions {\n  account: string\n}\n\nexport interface IRequestBrokerageOptions {\n  account: string\n}\n'.split(/\n\n/).filter( e => /export interface/.test(e))
+    let txTypes = 'export interface IMarker {\n  ledger: string | number\n  seq: string | number\n}\n\nexport interface ICurrency {\n  currency: string\n  issuer: string\n}\n\nexport interface IAmount {\n  currency: string\n  issuer: string\n  value: number\n}\n\nexport interface ISwtcTxOptions {\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface IPaymentTxOptions {\n  amount: IAmount\n  source?: string\n  from?: string\n  account?: string\n  destination?: string\n  to?: string\n  memo?: string\n  secret?: string\n  invoice?: string\n  sequence?: string | number\n}\n\nexport interface IOfferCreateTxOptions {\n  type: string\n  source?: string\n  from?: string\n  account?: string\n  gets?: IAmount\n  pays?: IAmount\n  taker_gets?: IAmount\n  taker_pays?: IAmount\n  platform?: any\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface IOfferCancelTxOptions {\n  sequence: number\n  source?: string\n  from?: string\n  account?: string\n  memo?: string\n  secret?: string\n}\n\nexport interface IContractInitTxOptions {\n  amount: number\n  account: string\n  abi: any[]\n  payload: string\n  params?: string[]\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface IContractInvokeTxOptions {\n  amount: number\n  account: string\n  destination: string\n  abi: any[]\n  func: string\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface IContractDeployTxOptions {\n  amount: IAmount\n  account: string\n  payload: string\n  params?: string[]\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface IContractCallTxOptions {\n  amount: IAmount\n  account: string\n  destination: string\n  params?: string[]\n  func?: string\n  foo?: string\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface ISignTxOptions {\n  blob: string\n}\n\nexport interface IAccountSetTxOptions {\n  type: string\n  source?: string\n  from?: string\n  account?: string\n  set?: string | number\n  set_flag?: string | number\n  clear?: string | number\n  clear_flag?: string | number\n  delegate_key?: string\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface IRelationTxOptions {\n  type: string\n  source?: string\n  from?: string\n  account?: string\n  target: string\n  limit: IAmount\n  quality_out: any\n  quality_in: any\n  memo?: string\n  secret?: string\n  sequence?: string | number\n}\n\nexport interface ISignerListTxOptions {\n  lists: any[]\n  account?: string\n  address?: string\n  threshold: string | number\n}\n\nexport interface ISignFirstTxOptions {\n  tx: any\n  account?: string\n  address?: string\n  secret: string\n}\n\nexport interface ISignOtherTxOptions {\n  tx_json: any\n  account?: string\n  address?: string\n  secret: string\n}\n\nexport interface IMultiSigningOptions {\n  account?: string\n  address?: string\n  secret: string\n}\n'.split(/\n\n/).filter( e => /export interface/.test(e))
+    // axios.get("https://raw.githubusercontent.com/swtcca/swtclib/master/packages/swtc-transaction/tssrc/types.ts").then(res => txTypes = res.data.split(/\n\n/).filter( e => /export interface/.test(e))).catch(e => {})
+    // axios.get("https://raw.githubusercontent.com/swtcca/swtclib/master/packages/swtc-lib/tssrc/types.ts").then(content => remoteTypes.split(/\n\n/).filter( e => /export interface/.test(e)) = res.data).catch(e => {})
     const interfaces = [...remoteTypes, ...txTypes]
     const Wallet = swtc_api.Remote.Wallet
     const sleep = time => new Promise(res => setTimeout(() => res(), time))
 
-    const labels = [ '基础', '常用', '账户', '查询', '写入', '进阶', '辅助', '独有', '关系', '合约', '买卖', '未知' ]
+    const labels = [ '基础', '常用', '账户', '查询', '写入', '进阶', '辅助', '独有', '关系', '合约', '多签', '买卖', '未知' ]
     const resourceLinks = [
       {name: 'swtdocs.org', url: 'http://www.swtcdocs.org'},
       {name: 'swtclib库源码', url: 'https://github.com/swtcca/swtclib'},
@@ -304,7 +306,7 @@ ${string}
                   <v-col cols="12" sm="6" md="8" class="pb-4"><v-text-field label="secret" :type="settings.walletSecretEye ? 'text' : 'password'" :append-icon="settings.walletSecretEye? 'mdi-eye' : 'mdi-eye-off'" @click:append="settings.walletSecretEye=!settings.walletSecretEye" v-model="settings.walletSecret"></v-text-field></v-col>
                 </v-row>
                 <v-row>
-                  <v-col cols="12" sm="6" md="4">测试链</v-col>
+                  <v-col cols="12" sm="6" md="4">公链</v-col>
                   <v-col cols="12" sm="6" md="8"  class="pb-4"><v-switch v-model="settings.testChain"></v-switch></v-col>
                   <v-col cols="12" sm="6" md="4">节点服务器</v-col>
                   <v-col cols="12" sm="6" md="8" class="pb-4"><v-text-field label="libServer" v-model="settings.libServer" readonly></v-text-field></v-col>
@@ -431,9 +433,9 @@ ${string}
             updateInterval: 10,
             maxBlocks: 10,
             cardHeight: localStorage.cardHeight || 270,
-            libServer: localStorage.libServer || 'ws://ts5.jingtum.com:5020',
-            apiServer: localStorage.apiServer || 'https://tapi.jingtum.com',
-            testIssuer:localStorage.testIssuer || 'jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS',
+            libServer: localStorage.libServer || 'wss://s.jingtum.com:5020',
+            apiServer: localStorage.apiServer || 'https://api.jingtum.com',
+            testIssuer:localStorage.testIssuer || 'jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or',
           })
         const wallets = vueCompositionApi.reactive({
             accountInfo: {balances: {loading: true}, payments: {loading: true}, orders: {loading: true}, txs: {loading: true}},
@@ -536,8 +538,8 @@ ${string}
         vueCompositionApi.watch(() => settings.testChain, async (value, oldValue) => {
             console.log(`detected change from ${oldValue} to ${value}` )
             if (value) {
-              settings.libServer = 'ws://ts5.jingtum.com:5020'
-              settings.apiServer = 'https://tapi.jingtum.com'
+              settings.libServer = 'wss://s.jingtum.com:5020'
+              settings.apiServer = 'https://api.jingtum.com'
             } else {
               settings.libServer = ''
               settings.apiServer = ''
@@ -575,15 +577,15 @@ ${string}
             funcSetInterval()
           })
         const computedRemoteOption = vueCompositionApi.computed(() => {
-            return settings.testChain ? {server: 'ws://ts5.jingtum.com:5020', issuer: `'${settings.testIssuer}'`} : {}
+            return settings.testChain ? {server: 'wss://s.jingtum.com:5020', issuer: `'${settings.testIssuer}'`} : {}
           })
         const computedApiRemoteOption = vueCompositionApi.computed(() => {
-            return settings.testChain ? {server: 'https://tapi.jingtum.com', issuer: `'${settings.testIssuer}'`} : {}
+            return settings.testChain ? {server: 'https://api.jingtum.com', issuer: `'${settings.testIssuer}'`} : {}
           })
         const computedRemoteString = vueCompositionApi.computed(() => {
             let r
             if (settings.testChain) {
-              r = `new (swtc_lib.Remote)({server: 'ws://ts5.jingtum.com:5020', issuer: '${settings.testIssuer}'})`
+              r = `new (swtc_lib.Remote)({server: 'wss://s.jingtum.com:5020', issuer: '${settings.testIssuer}'})`
             } else if (settings.libServer) {
               r = `new (swtc_lib.Remote)({server: ${settings.libServer}})`
             } else {
@@ -594,7 +596,7 @@ ${string}
         const computedRemote = vueCompositionApi.computed(() => {
             let r
             if (settings.testChain) {
-              r = new (swtc_lib.Remote)({server: 'ws://ts5.jingtum.com:5020', issuer: `'${settings.testIssuer}'`})
+              r = new (swtc_lib.Remote)({server: 'wss://s.jingtum.com:5020', issuer: `'${settings.testIssuer}'`})
             } else if (settings.libServer) {
               r = new (swtc_lib.Remote)({server: settings.libServer})
             } else {
@@ -605,7 +607,7 @@ ${string}
         const computedApiRemote = vueCompositionApi.computed(() => {
             let r
             if (settings.testChain) {
-              r = new (swtc_api.Remote)({server: 'https://tapi.jingtum.com', issuer: `'${settings.testIssuer}'`})
+              r = new (swtc_api.Remote)({server: 'https://api.jingtum.com', issuer: `'${settings.testIssuer}'`})
             } else if (settings.apiServer) {
               r = new (swtc_api.Remote)({server: `'${settings.apiServer}'`})
             } else {
@@ -832,7 +834,7 @@ remote.connectPromise()
           supplement: {
             key: 'supplement',
             show: false,
-            labels: ["辅助"],
+            labels: ["辅助", "多签"],
             title: '辅助',
             content: '',
             dicts: {},
@@ -840,6 +842,8 @@ remote.connectPromise()
               {name: '辅助', code: 'remote.makeCurrency()'},
               {name: '辅助', code: 'remote.makeAmount()'},
               {name: '辅助', code: 'tx.signPromise()'},
+              {name: '多签', code: 'tx.multiSigning()'},
+              {name: '多签', code: 'tx.multiSigned()'},
             ]
           },
         })
@@ -1036,7 +1040,7 @@ remote.connectPromise()
             params: 'object',
             showParams: false,
             returns: 'tx',
-            labels: ["进阶"],
+            labels: ["进阶", "买卖"],
             raised: false
           },
           buildBrokerageTx: {
@@ -1157,6 +1161,81 @@ remote.connectPromise()
             showParams: false,
             returns: 'tx',
             labels: ["进阶"],
+            raised: false
+          },
+          requestSignerList: {
+            key: 'requestSignerList',
+            anchor: '',
+            interface: '',
+            title: '查询账户多签',
+            content: '查询账户多签',
+            code_pre: '',
+            code_post: '',
+            code: '',
+            params: 'object',
+            showParams: false,
+            returns: 'request',
+            labels: ["进阶", "多签"],
+            raised: false
+          },
+          buildSignerListTx: {
+            key: 'buildSignerListTx',
+            anchor: '',
+            interface: '',
+            title: '设置账户多签',
+            content: '设置账户多签',
+            code_pre: '',
+            code_post: '',
+            code: '',
+            params: 'object',
+            showParams: false,
+            returns: 'tx',
+            labels: ["进阶", "多签"],
+            raised: false
+          },
+          buildMultisignedTx: {
+            key: 'buildMultisignedTx',
+            anchor: '',
+            interface: '',
+            title: '创建多签交易 参数tx_json',
+            content: '创建多签交易 参数tx_json',
+            code_pre: '',
+            code_post: '',
+            code: '',
+            params: '',
+            showParams: false,
+            returns: 'tx',
+            labels: ["进阶", "多签"],
+            raised: false
+          },
+          buildSignFirstTx: {
+            key: 'buildSignFirstTx',
+            anchor: '',
+            interface: '',
+            title: '多签交易首签',
+            content: '多签交易首签',
+            code_pre: '',
+            code_post: '',
+            code: '',
+            params: 'object',
+            showParams: false,
+            returns: 'tx',
+            labels: ["进阶", "多签"],
+            raised: false
+          },
+          buildSignOtherTx: {
+            key: 'buildSignOtherTx',
+            anchor: '',
+            interface: '',
+            title: '多签交易续签',
+            content: '多签交易续签',
+            code_pre: '',
+            code_post: '',
+            code: '',
+            params: 'object',
+            showParams: false,
+            returns: 'tx',
+            labels: ["进阶", "多签"],
             raised: false
           },
           // _setSequecePromise: {
